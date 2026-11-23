@@ -4,7 +4,22 @@
 <div class="workspace"><div class="left">
 <section><h2>Cabeçalho da folha</h2><div class="fields"><label>Título geral<input id="head" placeholder="Ex. Recebimento"></label><label>Subtítulo geral<input id="subhead" placeholder="Ex. Unidade ou data"></label></div></section>
 <section><h2 id="formTitle">Cadastrar produto</h2><form id="form"><div class="fields" id="fields"></div><div class="actions"><button class="primary" id="submit">Adicionar produto</button><button type="button" id="lookup">Buscar no catálogo</button><button type="reset">Limpar</button></div></form></section>
-<section><div class="heading"><h2>Produtos na folha</h2><span id="count"></span></div><div id="rows"></div></section></div>
-<section class="preview"><div class="heading"><h2>Prévia de impressão</h2><span>Carta · 2 × 3</span></div><div class="actions"><button id="word">Baixar Word</button><button class="primary" id="pdf">Baixar PDF</button><button id="layout" aria-expanded="false">Editor visual</button></div>
+<section><div class="heading"><h2>Produtos na folha</h2><span id="count"></span></div><div class="actions"><button id="backup">Exportar catálogo</button><button id="restaurarBackup">Importar backup</button><input id="backupFile" type="file" accept=".json,application/json" hidden></div><div id="rows"></div></section></div>
+<section class="preview"><div class="heading"><h2>Prévia de impressão</h2><span>Carta · 2 × 3</span></div><div class="actions"><button id="word">Baixar Word</button><button class="primary" id="pdf">Baixar PDF</button><button id="organizar">Posicionar etiquetas</button><button id="layout" aria-expanded="false">Editor visual</button></div>
 <div id="editor" hidden><label>Campo<select id="element"></select></label><div class="measures" id="measure"></div><div class="actions"><button id="center">Centralizar</button><button id="restore">Restaurar modelo</button></div><p>Arraste o campo selecionado na prévia para ajustar sua posição em todas as etiquetas.</p></div>
-<p id="status" role="status" aria-live="polite"></p><div id="pages"></div></section></div></main></html>
+<p id="status" role="status" aria-live="polite"></p><div id="pages"></div></section></div></main>
+<dialog id="revisao" aria-labelledby="tituloRevisao">
+  <h2 id="tituloRevisao">Revisar produtos importados</h2>
+  <p>Confira os dados e desmarque os produtos que não quer adicionar.</p>
+  <div id="itensRevisao"></div>
+  <p id="avisoRevisao" role="status"></p>
+  <div class="actions"><button id="confirmarImportacao" class="primary">Adicionar selecionados</button><form method="dialog"><button>Cancelar</button></form></div>
+</dialog>
+<dialog id="organizador" aria-labelledby="tituloOrganizador">
+  <h2 id="tituloOrganizador">Posicionar etiquetas</h2>
+  <p>Arraste uma etiqueta ou selecione-a e clique na posição de destino. Você pode deixar espaços vazios.</p>
+  <div class="actions"><button id="anteriorSlots">Folha anterior</button><span id="paginaSlots" aria-live="polite"></span><button id="proximoSlots">Próxima folha</button></div>
+  <div id="slots"></div>
+  <div class="actions"><button id="compactarSlots">Remover espaços vazios</button><form method="dialog"><button class="primary">Concluir</button></form></div>
+</dialog>
+</html>
