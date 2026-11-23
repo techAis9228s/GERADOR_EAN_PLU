@@ -4,7 +4,7 @@ const contexto = previa.getContext('2d');
 const formulario = $('fotoProduto');
 const estado = $('fotoEstado');
 const guardadas = [];
-let imagem, inicio, area, ocupado = false;
+let imagem, inicio, area, camera, abrindoCamera = false, ocupado = false;
 
 function carregarScript(url, nome) {
     return new Promise((resolve, reject) => {
@@ -90,23 +90,93 @@ function desenhar() {
 }
 
 $('anexarFoto').onclick = () => $('fotoDialogo').showModal();
-$('fotoArquivo').onchange = async e => {
+async function mostrarFoto(fonte) {
+    const nova = await createImageBitmap(fonte);
+    imagem?.close();
+    imagem = nova;
+    previa.width = imagem.width;
+    previa.height = imagem.height;
+    previa.hidden = false;
+    area = null;
+    $('lerFoto').disabled = true;
+    desenhar();
+    estado.textContent = 'Marque a primeira etiqueta na foto.';
+}
+
+async function carregarFoto(e) {
     const arquivo = e.target.files[0];
-    if (!arquivo || ocupado) return;
     e.target.value = '';
+    if (!arquivo || ocupado) return;
     try {
-        const nova = await createImageBitmap(arquivo);
-        imagem?.close();
-        imagem = nova;
-        previa.width = imagem.width;
-        previa.height = imagem.height;
-        previa.hidden = false;
-        area = null;
-        $('lerFoto').disabled = true;
-        desenhar();
-        estado.textContent = 'Marque a primeira etiqueta na foto.';
+        await mostrarFoto(arquivo);
     } catch {
         estado.textContent = 'Não foi possível abrir essa foto. Tente JPEG ou PNG.';
+    }
+}
+
+$('fotoArquivo').onchange = $('fotoCaptura').onchange = carregarFoto;
+
+function encerrarCamera() {
+    camera?.getTracks().forEach(track => track.stop());
+    camera = undefined;
+    $('cameraPrevia').srcObject = null;
+    $('cameraPrevia').hidden = $('cameraControles').hidden = true;
+    $('fotoArquivo').disabled = false;
+    $('lerFoto').disabled = !area || area.largura < 30 || area.altura < 20;
+}
+
+$('fotoDialogo').addEventListener('close', encerrarCamera);
+$('abrirCamera').onclick = async () => {
+    if (abrindoCamera || ocupado) return;
+    $('fotoDialogo').showModal();
+    if (!formulario.hidden) {
+        estado.textContent = 'Guarde ou descarte a leitura atual antes de tirar outra foto.';
+        return;
+    }
+    if (!navigator.mediaDevices?.getUserMedia) {
+        $('fotoCaptura').click();
+        return;
+    }
+    abrindoCamera = true;
+    $('fotoArquivo').disabled = $('lerFoto').disabled = true;
+    estado.textContent = 'Permita o acesso à câmera para fotografar a etiqueta.';
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { ideal: 'environment' } }, audio: false,
+        });
+        if (!$('fotoDialogo').open) {
+            stream.getTracks().forEach(track => track.stop());
+            return;
+        }
+        camera = stream;
+        const video = $('cameraPrevia');
+        video.srcObject = stream;
+        video.hidden = $('cameraControles').hidden = false;
+        await video.play();
+        estado.textContent = 'Enquadre a etiqueta e toque em Capturar foto.';
+    } catch {
+        encerrarCamera();
+        if ($('fotoDialogo').open) {
+            estado.textContent = 'A câmera não abriu. Use o seletor de foto abaixo.';
+            $('fotoCaptura').hidden = false;
+        }
+    } finally {
+        abrindoCamera = false;
+    }
+};
+
+$('capturarAgora').onclick = async () => {
+    const video = $('cameraPrevia');
+    if (!camera || !video.videoWidth) return;
+    const quadro = document.createElement('canvas');
+    quadro.width = video.videoWidth;
+    quadro.height = video.videoHeight;
+    quadro.getContext('2d').drawImage(video, 0, 0);
+    encerrarCamera();
+    try {
+        await mostrarFoto(quadro);
+    } catch {
+        estado.textContent = 'Não foi possível capturar a foto. Tente novamente.';
     }
 };
 
@@ -118,7 +188,7 @@ function ponto(e) {
     ];
 }
 previa.onpointerdown = e => {
-    if (ocupado || !formulario.hidden) return;
+    if (ocupado || camera || abrindoCamera || !formulario.hidden) return;
     inicio = ponto(e);
     previa.setPointerCapture(e.pointerId);
 };
