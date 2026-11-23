@@ -1,0 +1,38 @@
+@page {
+    size: letter portrait;
+    margin: 0;
+}
+
+html, body {
+    background: white;
+}
+
+body > :not(main),
+main > :not(.workspace),
+.workspace > :not(.preview),
+.preview > :not(#pages) {
+    display: none !important;
+}
+
+main, .workspace, .preview, #pages {
+    display: block;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: white;
+    border: 0;
+}
+
+#pages .paper {
+    width: 215.9mm;
+    height: 279.4mm;
+    margin: 0;
+    border: 0;
+    box-shadow: none;
+    break-inside: avoid;
+}
+
+#pages .paper + .paper {
+    break-before: page;
+}
