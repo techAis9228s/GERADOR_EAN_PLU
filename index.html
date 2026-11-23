@@ -1,0 +1,10 @@
+<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gerador de Etiquetas EAN e PLU</title><link rel="stylesheet" href="style.css"><script type="module" src="app.js"></script>
+<header class="top"><strong>GERADOR DE ETIQUETAS</strong></header>
+<main><div class="intro"><div><h1>Etiquetas EAN e PLU</h1><p>Cadastre produtos e monte folhas com seis etiquetas.</p></div><div class="actions"><input id="importFile" type="file" accept=".docx,.pdf" hidden><button id="import">Importar Word / PDF</button><button id="demo">Carregar exemplos</button></div></div>
+<div class="workspace"><div class="left">
+<section><h2>Cabeçalho da folha</h2><div class="fields"><label>Título geral<input id="head" placeholder="Ex. Recebimento"></label><label>Subtítulo geral<input id="subhead" placeholder="Ex. Unidade ou data"></label></div></section>
+<section><h2 id="formTitle">Cadastrar produto</h2><form id="form"><div class="fields" id="fields"></div><div class="actions"><button class="primary" id="submit">Adicionar produto</button><button type="button" id="lookup">Buscar no catálogo</button><button type="reset">Limpar</button></div></form></section>
+<section><div class="heading"><h2>Produtos na folha</h2><span id="count"></span></div><div id="rows"></div></section></div>
+<section class="preview"><div class="heading"><h2>Prévia de impressão</h2><span>Carta · 2 × 3</span></div><div class="actions"><button id="word">Baixar Word</button><button class="primary" id="pdf">Baixar PDF</button><button id="layout" aria-expanded="false">Editor visual</button></div>
+<div id="editor" hidden><label>Campo<select id="element"></select></label><div class="measures" id="measure"></div><div class="actions"><button id="center">Centralizar</button><button id="restore">Restaurar modelo</button></div><p>Arraste o campo selecionado na prévia para ajustar sua posição em todas as etiquetas.</p></div>
+<p id="status" role="status" aria-live="polite"></p><div id="pages"></div></section></div></main></html>
